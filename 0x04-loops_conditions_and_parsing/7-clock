@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# display hours and minutes - 7 clock
+
+hours=0
+while [ $hours -le 12 ]; do
+    echo "Hour: $hours"
+	mins=1
+	while [ $mins -le 59 ]; do
+	    echo "$mins"
+	    ((mins++))
+	done
+	((hours++))
+done
