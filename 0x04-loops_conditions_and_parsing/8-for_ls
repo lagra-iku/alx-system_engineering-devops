@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# print file names in current directory after first dash
+
+for file in *; do
+    if [[ -f $file ]]; then
+        name="${file#*-}"
+        echo "$name"
+    fi
+done
