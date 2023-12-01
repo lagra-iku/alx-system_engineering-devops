@@ -4,9 +4,15 @@
 sudo apt-get -y update
 sudo apt-get -y install nginx
 sudo ufw allow 'Nginx HTTP'
-echo "Holberton School" |sudo tee /var/www/html/index.html
-var="server_name _;\n\trewrite ^\/redirect_me https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4 permanent;"
-cd /etc/nginx/sites-available/
-sudo sed -i "s/server_name _;/$var/" default
-cd -
+echo "Hello World!" |sudo tee /var/www/html/index.html
+cat > /etc/nginx/sites-available/default << EOL
+server {
+	listen 80;
+	server_name lagra.tech;
+
+	location /redirect_me {
+		return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+	}
+}
+EOL
 sudo service nginx restart
