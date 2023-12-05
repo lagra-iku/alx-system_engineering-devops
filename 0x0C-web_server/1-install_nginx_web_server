@@ -2,7 +2,20 @@
 # Install NGINX on server
 
 sudo apt-get update
+sudo apt-get upgrade -y
 sudo apt-get install -y nginx
-sudo sed -i 's/.*listen\s*80.*/listen 80;/g' /etc/nginx/sites-available/default
-echo "Hello World!" | sudo tee /var/www/html/index.html > /dev/null
-sudo kill -s HUP '$(cat /var/run/nginx.pid)'
+sudo bash -c 'cat <<EOF >> /var/www/html/index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World!</title>
+</head>
+<body>
+    <h1>Hello World!</h1>
+</body>
+</html>
+EOF'
+
+sudo sed -i 's/listen 80 default_server;/listen 80;/' /etc/nginx/sites-available/default
+sudo sed -i 's/# server_names_hash_bucket_size 64;/server_names_hash_bucket_size 64;/' /etc/nginx/nginx.conf
+sudo service nginx restart
