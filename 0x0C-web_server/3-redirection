@@ -1,18 +1,33 @@
 #!/usr/bin/env bash
-# Configure Nginx server to redirect to another page
+# Adding a redirect
 
-sudo apt-get -y update
-sudo apt-get -y install nginx
-sudo ufw allow 'Nginx HTTP'
-echo "Hello World!" |sudo tee /var/www/html/index.html
-cat > /etc/nginx/sites-available/default << EOL
-server {
-	listen 80;
-	server_name lagra.tech;
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install -y nginx
+sudo bash -c 'cat <<EOF >> /var/www/html/index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World!</title>
+</head>
+<body>
+    <h1>Hello World!</h1>
+</body>
+</html>
+EOF'
 
-	location /redirect_me {
-		return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-	}
-}
-EOL
+sudo bash -c 'cat <<EOF >> /var/www/html/redirect_me
+<html>
+<head>
+    <title>Redirecting</title>
+    <meta http-equiv="refresh" content="0;URL='https://www.youtube.com/watch?v=QH2-TGUlwu4'" />
+</head>
+<body>
+    <h1>Redirecting...</h1>
+</body>
+</html>
+EOF'
+
+sudo sed -i 's/listen 80 default_server;/listen 80;/' /etc/nginx/sites-available/default
+sudo sed -i 's/# server_names_hash_bucket_size 64;/server_names_hash_bucket_size 64;/' /etc/nginx/nginx.conf
 sudo service nginx restart
