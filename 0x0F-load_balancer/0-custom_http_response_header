@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 #installing nginx and configuring response headers, 301 and 404 redirection
 
-sudo apt-get update
+supt-get update
 sudo apt-get upgrade -y
 sudo apt-get install -y nginx
-var = $(hostname)
 sudo bash -c 'cat <<EOF >> /var/www/html/index.html
 <!DOCTYPE html>
 <html>
@@ -28,9 +27,30 @@ sudo bash -c "cat <<EOF >> /var/www/html/error-404.html
 </body>
 </html>
 EOF"
-new_string="error_page 404 \/error-404.html;\n location \/redirect_me {\n return 301 \$scheme:\/\/www.google.com;"
-new_string2="server {\n\tadd_header X-Served-By $var;"
-sudo sed -i -E "s/^[^#]+location \/ \{/$new_string/" /etc/nginx/sites-available/default
-sudo sed -i -E "s/^server \{/$new_string2/" /etc/nginx/sites-available/default
 
-sudo systemctl restart nginx
+sudo bash -c "cat > /etc/nginx/sites-enabled/default << 'EOF'
+server {
+listen 80 default_server;
+listen [::]:80 default_server;
+server_tokens off;
+root /var/www/html;
+index index.html index.htm index.nginx-debian.html index.php;
+server_name _;
+location / {
+    add_header X-Served-By \$hostname;
+try_files \$uri \$uri/ =404;
+}
+
+location /redirect_me {
+    return 301 'https://www.youtube.com/watch?v=QH2-TGUlwu4';
+}
+
+error_page 404 /error-404.html;
+location = /error-404.html {
+    root /var/www/html;
+    internal;
+}
+}
+EOF"
+
+sudo systemctl restart nginx 
