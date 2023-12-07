@@ -1,0 +1,50 @@
+#!usr/bin/env bash
+#installing nginx and configuring response headers, 301 and 404 redirection
+
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install -y nginx
+sudo bash -c 'cat <<EOF >> /var/www/html/index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World!</title>
+</head>
+<body>
+    <h1>Hello World!</h1>
+</body>
+</html>
+EOF'
+
+sudo bash -c "cat <<EOF >> /var/www/html/error-404.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error 404 - Not Found</title>
+</head>
+<body>
+    <h1>Ceci n'est pas une page</h1>
+</body>
+</html>
+EOF"
+
+
+printf %s "server {
+    listen 80;
+    listen [::]:80 default_server;
+    root   /etc/nginx/html;
+    index  index.html index.htm;
+
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+
+    error_page 404 /404.html;
+    location /404 {
+      root /etc/nginx/html;
+      internal;
+    }
+}" > /etc/nginx/sites-available/default
+
+
+sudo systemctl restart nginx
