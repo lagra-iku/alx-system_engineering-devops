@@ -1,4 +1,4 @@
-#!usr/bin/env bash
+#!/usr/bin/env bash
 #installing nginx and configuring response headers, 301 and 404 redirection
 
 sudo apt-get update
