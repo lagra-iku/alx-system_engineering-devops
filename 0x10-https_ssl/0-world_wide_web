@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# A script to configure domain zone
+
+function get_record() {
+    domain=$1
+    subdomain=$2
+
+    if [[ -z "$subdomain" ]]; then
+        echo "Error: subdomain parameter is empty."
+        exit 1
+    fi
+
+    full_domain="${subdomain}.${domain}"
+
+    record=$(dig +short ${full_domain})
+    record_type=$(dig +short ${full_domain} -t ANY | awk '/IN/ {print $4}')
+
+    if [[ -z "$record" ]]; then
+        echo "Error: Record not found for domain ${full_domain}."
+        exit 1
+    fi
+
+    echo "The subdomain ${subdomain} is a ${record_type} record and points to ${record}."
+}
+
+if [[ $# -eq 1 ]]; then
+    domain=$1
+    get_record $domain "www"
+    get_record $domain "lb-01"
+    get_record $domain "web-01"
+    get_record $domain "web-02"
+else
+    domain=$1
+    subdomain=$2
+    get_record $domain $subdomain
+fi
