@@ -13,7 +13,7 @@ function get_record() {
     full_domain="${subdomain}.${domain}"
 
     record=$(dig +short ${full_domain})
-    record_type=$(dig +short ${full_domain} -t ANY | awk '/IN/ {print $4}')
+    record_type=$(dig $full_domain | grep 'IN' | awk '{print $4}' | sed '/^$/d')
 
     if [[ -z "$record" ]]; then
         echo "Error: Record not found for domain ${full_domain}."
