@@ -28,12 +28,12 @@ def get_employee_todo_progress(employee_id):
            total_tasks
          )
     )
-    print(f"{user_data['name']}:", end=' ')
+    """print(f"{user_data['name']}:", end=' ')
     print(f"name of the employee")
-
+    """
     for task in todos_data:
         if task['completed']:
-            print(f"\t{task['title']}")
+            print(f"\t {task['title']}")
 
 
 if __name__ == "__main__":
